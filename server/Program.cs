@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore.SqlServer;
 using Models.Model;
 using DAL.Classes;
 using DAL.Intefaces;
+using Serilog;
+using Server.MiddleWares;
 //using Microsoft.EntityFrameworkCore.Tools;
 string cors = "_cors";
 
@@ -37,6 +39,8 @@ builder.Services.AddCors(option =>
         });
 });
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -46,6 +50,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseCors(cors);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.File(@"C:\רבקי תכנות\שנה ב\server\Middleware.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+app.UseMiddleware<MyMiddleWare>();
+app.UseMiddleware<Middleware>();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
